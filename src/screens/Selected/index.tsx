@@ -1,67 +1,37 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-/* ---------- 1. Gera 3 palavras aleatórias para cada “posição” ---------- */
+/* ---------- 1. Palavras base ---------- */
 const ALL_WORDS = [
-  "apple",
-  "banana",
-  "cherry",
-  "dragon",
-  "elephant",
-  "falcon",
-  "guitar",
-  "honey",
-  "island",
-  "jungle",
-  "kangaroo",
-  "lemon",
-  "mountain",
-  "nectar",
-  "ocean",
-  "piano",
-  "quartz",
-  "rocket",
-  "sunshine",
-  "tiger",
-  "umbrella",
-  "volcano",
-  "waterfall",
-  "xylophone",
-  "yacht",
-  "zebra",
+  "apple", "banana", "cherry", "dragon", "elephant", "falcon",
+  "guitar", "honey", "island", "jungle", "kangaroo", "lemon",
+  "mountain", "nectar", "ocean", "piano", "quartz", "rocket",
+  "sunshine", "tiger", "umbrella", "volcano", "waterfall",
+  "xylophone", "yacht", "zebra",
 ];
 
+/* Embaralha e pega 14 únicas */
 function pickRandomWords(n: number) {
   const shuffled = [...ALL_WORDS].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, n);
 }
 
-/* Cria 5 “listas” (0-4) com 3 palavras cada ─ geradas apenas 1x */
-const wordsForPosition: string[][] = Array.from({ length: 5 }, () =>
-  pickRandomWords(5)
-);
-
 /* ---------- 2. Componente ---------- */
-const Selected = () => {
-  const { id } = useParams<{ id?: string }>();
-  const index = Number(id); // id → número
-  const words = useMemo(
-    () =>
-      Number.isNaN(index) || index < 0 || index >= wordsForPosition.length
-        ? []
-        : wordsForPosition[index],
-    [index]
-  );
+const Selected: React.FC = () => {
+  const words = useMemo(() => pickRandomWords(14), []);
 
-  /* Estado dos checkboxes (um bool por palavra) */
-  const [checked, setChecked] = useState(words.map(() => false));
+  /* Estado da navegação */
+  const [currentIdx, setCurrentIdx] = useState(0);  // qual palavra está na tela
+  const [checked, setChecked] = useState(false);    // checkbox da palavra atual
+  const completed = currentIdx >= words.length;     // todas foram vistas
 
-  const toggle = (i: number) =>
-    setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
+  /* Se o id mudar, reinicia a dinâmica */
+  useEffect(() => {
+    setCurrentIdx(0);
+    setChecked(false);
+  }, [words]);
 
-  const allChecked = checked.every(Boolean);
-
-  /* Se id for inválido, mostra mensagem simples */
+  /* Exibe fallback se rota inválida */
   if (!words.length) {
     return (
       <div className="bg-cyan-950 text-white min-h-screen flex items-center justify-center">
@@ -70,35 +40,52 @@ const Selected = () => {
     );
   }
 
-  return (
-    <div className="bg-cyan-950 min-h-screen flex flex-col items-center pt-10 text-white">
-      {/* Lista de palavras + checkboxes */}
-      <ul className="space-y-4">
-        {words.map((word, i) => (
-          <li key={word} className="flex items-center gap-3">
-            <label htmlFor={`chk-${i}`} className="select-none text-xl">
-              {word}
-            </label>
-            <input
-              id={`chk-${i}`}
-              type="checkbox"
-              checked={checked[i]}
-              onChange={() => toggle(i)}
-              className="h-5 w-5 accent-emerald-500"
-            />
-          </li>
-        ))}
-      </ul>
+  /* Última palavra já marcada? -> exibe aviso */
+  if (completed) {
+    return (
+      <div className="bg-cyan-950 text-white min-h-screen flex flex-col items-center justify-center">
+        <h1 className="text-2xl mb-4">Parabéns!</h1>
+        <p>Todas as palavras foram concluídas 🎉</p>
+      </div>
+    );
+  }
 
-      {/* Botão aparece só depois de todos marcados */}
-      {allChecked && (
+  /* Palavra atual */
+  const word = words[currentIdx];
+
+  return (
+    <div className="bg-cyan-950 min-h-screen flex flex-col items-center justify-center text-white px-4">
+      {/* Palavra + checkbox */}
+      <div className="flex items-center gap-3 mb-6">
+        <label htmlFor="chk" className="text-3xl select-none">
+          {word}
+        </label>
+        <input
+          id="chk"
+          type="checkbox"
+          checked={checked}
+          onChange={() => setChecked((v) => !v)}
+          className="h-6 w-6 accent-emerald-500"
+        />
+      </div>
+
+      {/* Botão “Próxima palavra” só aparece se marcar checkbox */}
+      {checked && (
         <button
-          onClick={() => console.log("Finalizado")}
-          className="mt-8 px-6 py-3 rounded bg-emerald-600 hover:bg-emerald-700 transition"
+          onClick={() => {
+            setCurrentIdx((i) => i + 1);
+            setChecked(false);
+          }}
+          className="px-8 py-3 rounded bg-emerald-600 hover:bg-emerald-700 transition"
         >
-          Finalizar
+          Próxima palavra
         </button>
       )}
+
+      {/* Progresso opcional */}
+      <p className="mt-8 text-sm opacity-75">
+        {currentIdx + (checked ? 1 : 0)} / {words.length} concluídas
+      </p>
     </div>
   );
 };
