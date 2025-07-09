@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { useParams } from "react-router-dom";
 
 /* ---------- 1. Palavras base ---------- */
 const ALL_WORDS = [
