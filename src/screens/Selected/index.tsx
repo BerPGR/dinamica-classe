@@ -53,7 +53,7 @@ function pickRandomWords(n: number) {
 
 /* ---------- 2. Componente ---------- */
 const Selected: React.FC = () => {
-  const words = useMemo(() => pickRandomWords(14), []);
+  const words = useMemo(() => pickRandomWords(20), []);
 
   /* Estado da navegação */
   const [currentIdx, setCurrentIdx] = useState(0); // qual palavra está na tela
