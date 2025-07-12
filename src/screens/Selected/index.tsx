@@ -2,11 +2,47 @@ import React, { useState, useMemo, useEffect } from "react";
 
 /* ---------- 1. Palavras base ---------- */
 const ALL_WORDS = [
-  "apple", "banana", "cherry", "dragon", "elephant", "falcon",
-  "guitar", "honey", "island", "jungle", "kangaroo", "lemon",
-  "mountain", "nectar", "ocean", "piano", "quartz", "rocket",
-  "sunshine", "tiger", "umbrella", "volcano", "waterfall",
-  "xylophone", "yacht", "zebra",
+  "Moisés",
+  "Faraó",
+  "Egito",
+  "Sarça",
+  "Praga",
+  "Nilo",
+  "Cordeiro",
+  "Páscoa",
+  "Sangue",
+  "Escravidão",
+  "Tenda",
+  "Sinai",
+  "Mandamentos",
+  "Maná",
+  "Arão",
+  "Vara",
+  "Tabernáculo",
+  "Mar Vermelho",
+  "Libertação",
+  "Deserto",
+  "Nuvem",
+  "Bezerro",
+  "Idolatria",
+  "Lei",
+  "Aliança",
+  "Libertador",
+  "Rocha",
+  "Muralha",
+  "Canaã",
+  "Josué",
+  "Levitas",
+  "Arca",
+  "Anjo",
+  "Bastão",
+  "Obediência",
+  "Tentação",
+  "Fé",
+  "Pecado",
+  "Perdão",
+  "Êxodo",
+  "Redenção",
 ];
 
 /* Embaralha e pega 14 únicas */
@@ -20,9 +56,9 @@ const Selected: React.FC = () => {
   const words = useMemo(() => pickRandomWords(14), []);
 
   /* Estado da navegação */
-  const [currentIdx, setCurrentIdx] = useState(0);  // qual palavra está na tela
-  const [checked, setChecked] = useState(false);    // checkbox da palavra atual
-  const completed = currentIdx >= words.length;     // todas foram vistas
+  const [currentIdx, setCurrentIdx] = useState(0); // qual palavra está na tela
+  const [checked, setChecked] = useState(false); // checkbox da palavra atual
+  const completed = currentIdx >= words.length; // todas foram vistas
 
   /* Se o id mudar, reinicia a dinâmica */
   useEffect(() => {
